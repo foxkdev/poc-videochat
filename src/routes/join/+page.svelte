@@ -64,6 +64,7 @@ const connectToPeer = () => {
   const call = peer.call(codeid, localStream)
 
   call.on('stream', (stream) => {
+    // console.log(stream.getAudioTracks())
     remoteVideo.srcObject = stream
   })
 
@@ -80,17 +81,18 @@ const connectToPeer = () => {
   connect</button>
 
   <!-- VIDEO YOU FRIEND TAG HTML -->
+  REMOTE:
   <video 
   bind:this={remoteVideo}
   width="400" height="400" autoplay="true">
-    <track kind="captions" src="">
+    <!-- <track kind="captions" src=""> -->
   </video>
   <br>
-
+  YOU:
   <!-- YOU FACE CAM HERE -->
   <video 
   bind:this={localVideo}
   width="400" height="400" autoplay="true">
-    <track kind="captions" src="">
+    <!-- <track kind="captions" src=""> -->
   </video>
 </div>
