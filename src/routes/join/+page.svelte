@@ -56,7 +56,7 @@ const initMedia = () => {
     //   track.enabled = false;
     // });
     localVideo.srcObject = stream
-    // localVideo.muted = true
+    localVideo.muted = true
     localStream = stream
   })
 }
@@ -97,6 +97,6 @@ const connectToPeer = () => {
     <!-- <track kind="captions" src=""> -->
   </video>
 
-  <button on:click={localVideo.muted = !localVideo.muted}> mute you</button>
-  <button on:click={remoteVideo.muted = !remoteVideo.muted}>mute remote </button>
+  <!-- <button on:click={localVideo.muted = !localVideo.muted}> mute you</button>
+  <button on:click={remoteVideo.muted = !remoteVideo.muted}>mute remote </button> -->
 </div>
