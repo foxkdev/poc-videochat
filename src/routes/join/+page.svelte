@@ -7,49 +7,66 @@ var peer = new Peer('', {
   secure: true,
 });
 let codeid = ""
-let videocurrent;
-let videoEl;
+// let videocurrent;
+// let videoEl;
 let youid = ""
+
+
+let localStream = null
+let localVideo = null;
+
+let removeStream = null
+let remoteVideo = null;
 
   // GET YOU ID
   peer.on("open",(id)=>{
     youid = id
-    console.log(id)
+    console.log('Conexion establecida con ID: ' + id)
+    initMedia();
   })
   // IF ERROR CAN GET ID
    peer.on("error",(id)=>{
     console.log("error id "+ id)
   })
 
-  peer.on("connection",(conn)=>{
-    console.log("message....")
-    conn.on("data",(data)=>{
-      console.log("new data " + data)
-    })
-    conn.on("open",()=>{
-      console.log("new message")
-    })
-  })
+  // peer.on("connection",(conn)=>{
+  //   console.log("message....")
+  //   conn.on("data",(data)=>{
+  //     console.log("new data " + data)
+  //   })
+  //   conn.on("open",()=>{
+  //     console.log("new message")
+  //   })
+  // })
   
   // HANDLE CONNECTTION
   peer.on("call",async(call)=>{
-    console.log('CALL INIT')
-    // open webcam
-  await navigator.mediaDevices.getUserMedia({
+    call.answer(localStream)
+    call.on("stream", (stream) => {
+      remoteVideo.srcObject = stream
+    })
+})
+
+const initMedia = () => {
+  navigator.mediaDevices.getUserMedia({
     video:true,
     audio:true
   }).then((stream)=>{
-    call.answer(stream)
-    call.on("stream",renderYouwebcam)
-    videocurrent.srcObject = stream
-    videocurrent.play()
-  }).catch(err=>console.log("err msg" + err))
-})
-// RENDER YOU WEBCAM HERE
-let renderYouwebcam = (stream)=>{
-  console.log(stream)
-  videoEl.srcObject = stream
-  videoEl.play()
+    stream.getAudioTracks().forEach(track => {
+      track.enabled = false;
+    });
+    localVideo.srcObject = stream
+    localStream = stream
+  })
+}
+
+const connectToPeer = () => {
+  const call = peer.call(codeid, localStream)
+
+  call.on('stream', (stream) => {
+    remoteVideo.srcObject = stream
+  })
+
 }
 
 </script>
@@ -59,36 +76,12 @@ let renderYouwebcam = (stream)=>{
   code : <input type=""
   bind:value={codeid} name="">
   <!-- BUTTON CONNECT TO FRIEND -->
-  <button
-  on:click={async()=>{
-    console.log('CONNECTION INIT')
-    var conn = peer.connect(codeid)
-    conn.on("data",(data)=>{
-      console.log("new data " + data)
-    })
-    conn.on("open",function(){
-      conn.send("hi")
-    })
-    conn.on('error', (err) => {
-      console.error(err)
-    })
-    // OPEN YOU WEBAM
-    await navigator.mediaDevices.getUserMedia({
-      video:true,
-      audio:true
-    }).then(stream=>{
-      let call = peer.call(codeid,stream)
-      videocurrent.srcObject = stream
-      videocurrent.play()
-      call.on("stream",renderYouwebcam)
-    }).catch(err=>console.log("have error " + err))
-  }}
-  >
+  <button on:click={connectToPeer}>
   connect</button>
 
   <!-- VIDEO YOU FRIEND TAG HTML -->
   <video 
-  bind:this={videoEl}
+  bind:this={remoteVideo}
   width="400" height="400" autoplay="true">
     <track kind="captions" src="">
   </video>
@@ -96,7 +89,7 @@ let renderYouwebcam = (stream)=>{
 
   <!-- YOU FACE CAM HERE -->
   <video 
-  bind:this={videocurrent}
+  bind:this={localVideo}
   width="400" height="400" autoplay="true">
     <track kind="captions" src="">
   </video>
