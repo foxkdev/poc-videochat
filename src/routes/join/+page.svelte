@@ -1,6 +1,10 @@
 <script>
   import {Peer} from 'peerjs'
-var peer = new Peer();
+var peer = new Peer('test-1', {
+  host: 'https://peer-server-8x76.onrender.com',
+  port: 1000,
+  path: '/join'
+});
 let codeid = ""
 let videocurrent;
 let videoEl;
