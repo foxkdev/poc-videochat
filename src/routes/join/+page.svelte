@@ -1,9 +1,10 @@
 <script>
   import {Peer} from 'peerjs'
-var peer = new Peer('test-1', {
+var peer = new Peer('', {
   host: 'peer-server-8x76.onrender.com',
-  port: 1000,
-  path: '/join'
+  port: 443,
+  path: '/',
+  secure: true,
 });
 let codeid = ""
 let videocurrent;
@@ -32,6 +33,7 @@ let youid = ""
   
   // HANDLE CONNECTTION
   peer.on("call",async(call)=>{
+    console.log('CALL INIT')
     // open webcam
   await navigator.mediaDevices.getUserMedia({
     video:true,
@@ -59,12 +61,16 @@ let renderYouwebcam = (stream)=>{
   <!-- BUTTON CONNECT TO FRIEND -->
   <button
   on:click={async()=>{
+    console.log('CONNECTION INIT')
     var conn = peer.connect(codeid)
     conn.on("data",(data)=>{
       console.log("new data " + data)
     })
     conn.on("open",function(){
       conn.send("hi")
+    })
+    conn.on('error', (err) => {
+      console.error(err)
     })
     // OPEN YOU WEBAM
     await navigator.mediaDevices.getUserMedia({
