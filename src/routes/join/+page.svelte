@@ -52,9 +52,9 @@ const initMedia = () => {
     video:true,
     audio:true
   }).then((stream)=>{
-    stream.getAudioTracks().forEach(track => {
-      track.enabled = false;
-    });
+    // stream.getAudioTracks().forEach(track => {
+    //   track.enabled = false;
+    // });
     localVideo.srcObject = stream
     localStream = stream
   })
